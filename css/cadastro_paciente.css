@@ -1,0 +1,155 @@
+/* Estilo geral do body */
+body {
+    background-image: url(../img/backgroud.jpeg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    padding-top: 60px;
+    /* Adiciona espaço suficiente para a navbar */
+}
+
+/* Estilo do card */
+.card {
+    width: 90%;
+    /* Ajuste a largura do card para se adaptar melhor em dispositivos menores */
+    max-width: 500px;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    text-align: center;
+    margin: 0 auto;
+    /* Centraliza o card horizontalmente */
+    position: relative;
+    /* Removido o posicionamento absoluto */
+    top: 20px;
+    /* Remove a posição fixa vertical */
+}
+
+.card img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+/* Estilo dos campos de input */
+.card .input-wrapper {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.card .input-wrapper span {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.card .name-fields {
+    display: flex;
+    justify-content: space-between;
+}
+
+.card .input-field {
+    width: calc(100% - 10px);
+}
+
+.card input[type="email"],
+.card input[type="text"],
+.card input[type="date"],
+.card input[type="tel"],
+.card select {
+    width: calc(100% - 10px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Estilo dos campos em duplas */
+.card .duo-fields {
+    display: flex;
+    justify-content: space-between;
+}
+
+.card .duo-fields .input-field {
+    width: calc(48% - 10px);
+}
+
+/* Estilo do link de login */
+.card .login-link {
+    display: inline-block;
+    width: 100%;
+    /* Faz o botão ocupar a largura total do card */
+    padding: 10px 0;
+    border: none;
+    border-radius: 10px;
+    background-color: rgb(90, 90, 231);
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 10px;
+}
+
+.card .login-link:hover {
+    background-color: #0056b3;
+}
+
+.container {
+    position: relative;
+}
+
+.back-arrow {
+    position: absolute;
+    top: -100px;
+    left: 10px;
+}
+
+.back-arrow a {
+    text-decoration: none;
+    font-size: 32px;
+    color: #000;
+    /* Altere a cor conforme necessário */
+}
+
+/* styles.css */
+.back-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #f1f1f1;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+/* Media queries para ajustar o layout em diferentes tamanhos de tela */
+@media (max-width: 768px) {
+    body {
+        padding-top: 200%;
+        /* Aumenta o espaçamento superior para dispositivos móveis */
+    }
+
+    .card {
+        width: 95%;
+        /* Ajusta a largura do card para se adaptar melhor em dispositivos menores */
+        padding: 20px;
+        /* Ajusta o padding do card em telas menores */
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        width: 100%;
+        /* Faz o card ocupar a largura total em telas muito pequenas */
+        padding: 15px;
+        /* Ajusta o padding do card em telas muito pequenas */
+    }
+}

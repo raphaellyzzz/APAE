@@ -1,0 +1,231 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-size: 16px;
+  /* Tamanho base da fonte */
+}
+
+body {
+  background-image: url(../img/backgroud.jpeg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  margin-top: 60px;
+  width: 100%;
+}
+
+.carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  height: auto;
+}
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+}
+
+.carousel-slide {
+  display: flex;
+  transition: transform 1s ease-in-out;
+  width: 100%;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.carousel-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(90deg, #f0d436, #274688, #267696, #d81a1a);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 2.5em;
+  padding: 10px 20px;
+  border-radius: 10px;
+  z-index: 1;
+  text-align: center;
+  animation: gradient 6s linear infinite;
+  text-shadow: 3px 3px 5px rgba(255, 255, 255, 0.206);
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 0%;
+  }
+
+  50% {
+    background-position: 100% 100%;
+  }
+
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+.carousel-title span {
+  font-size: 2em;
+}
+
+.carousel-indicators {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+}
+
+.carousel-indicator {
+  width: 12px;
+  height: 12px;
+  background-color: #bbb;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.carousel-indicator.active {
+  background-color: #717171;
+}
+
+.activities-section {
+  background-color: #ffffff83;
+  /* Cor de fundo branca */
+  padding: 20px;
+  /* Padding para espaçamento interno */
+  margin: 0;
+  /* Remove margens externas */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* Sombra leve para destaque */
+  text-align: center;
+  width: 100%;
+  /* Garante que a seção ocupe toda a largura da tela */
+  box-sizing: border-box;
+  /* Inclui padding e bordas no cálculo da largura */
+}
+
+.activities-section h2 {
+  font-size: 2.5em;
+  color: #1a1a1a;
+  /* Cor do texto */
+  margin: 0;
+  padding: 10px 0;
+  /* Padding para espaçamento interno do título */
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  /* Permite que os cards se movam para a próxima linha se não houver espaço suficiente */
+  gap: 20px;
+  /* Espaço entre os cards */
+  justify-content: center;
+  /* Centraliza os cards horizontalmente */
+  margin-top: 20px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  text-align: center;
+  width: calc(50% - 20px);
+  /* Ajusta a largura dos cards para dois por linha, considerando o gap */
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.card p {
+  font-size: 0.9em;
+  color: #000;
+  margin: 0;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+  .card {
+    width: calc(50% - 20px);
+    /* Ajusta para dois cards por linha em telas menores que 768px */
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    width: 100%;
+    /* Ajusta para um card por linha em telas menores que 480px */
+    max-width: 100%;
+  }
+
+  .card p {
+    font-size: 0.8em;
+  }
+
+  .carousel-title {
+    font-size: 1.2em;
+  }
+}
+
+iframe {
+  margin: 2.5% 0 2.5% 0;
+  width: 90%;
+  border-radius: 1%;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.524);
+}
+
+.maps {
+  text-align: center;
+  margin-top: 5%;
+  background-color: #ffffff83;
+  width: 100%;
+  height: auto;
+}

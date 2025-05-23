@@ -1,0 +1,141 @@
+/* Estilo geral do body */
+/* Estilo geral do body */
+body {
+    background-image: url(../img/backgroud.jpeg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    padding-top: 120px;
+    /* Aumenta o espaço para a navbar fixa */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Estilo do card */
+.card {
+    width: 90%;
+    /* Ajusta a largura do card para se adaptar em dispositivos menores */
+    max-width: 500px;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    text-align: center;
+    margin: 10px auto;
+    /* Aumenta ainda mais o espaçamento superior */
+    flex: 1;
+}
+
+
+
+/* Estilo da imagem do card */
+.card img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+}
+
+/* Estilo do wrapper de input */
+.card .input-wrapper {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.card .input-wrapper span {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+/* Estilo dos campos de nome */
+.card .name-fields {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Estilo dos campos de input */
+.card .input-field {
+    width: calc(50% - 10px);
+}
+
+.card input[type="email"],
+.card .password-input input[type="password"],
+.card .password-input input[type="text"],
+.card input[type="text"] {
+    width: calc(100% - 10px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Estilo do wrapper de senha */
+.card .password-input {
+    position: relative;
+}
+
+/* Estilo do botão de mostrar/esconder senha */
+.card .toggle-password,
+.toggle-password2 {
+    display: block;
+    text-align: right;
+    cursor: pointer;
+    color: #007bff;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* Estilo do link de login */
+.card .login-link {
+    display: inline-block;
+    width: 100%;
+    /* Faz o botão ocupar a largura total do card */
+    padding: 10px 0;
+    border: none;
+    border-radius: 10px;
+    background-color: rgb(90, 90, 231);
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 10px;
+}
+
+.card .login-link:hover {
+    background-color: #0056b3;
+}
+
+/* Media queries para ajustar o layout em diferentes tamanhos de tela */
+@media (max-width: 768px) {
+    body {
+        padding-top: 80px;
+        /* Ajusta o espaçamento superior para dispositivos móveis */
+    }
+
+    .card {
+        width: 95%;
+        /* Ajusta a largura do card para se adaptar melhor em dispositivos menores */
+        padding: 20px;
+        /* Ajusta o padding do card em telas menores */
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding-top: 90px;
+        /* Ajusta o espaçamento superior em telas muito pequenas */
+    }
+
+    .card {
+        width: 100%;
+        /* Faz o card ocupar a largura total em telas muito pequenas */
+        padding: 15px;
+        /* Ajusta o padding do card em telas muito pequenas */
+    }
+}

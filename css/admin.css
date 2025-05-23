@@ -1,0 +1,146 @@
+/* login.css */
+
+html,
+body {
+    margin: 0;
+    height: 100%;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    /* Gradiente de fundo moderno */
+    display: flex;
+    flex-direction: column;
+    padding-top: 70px;
+    /* Espaço suficiente para a navbar fixa */
+}
+
+/* Wrapper para o conteúdo principal */
+.content-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Container do login */
+.login-container {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    width: 90%;
+    /* Ajusta a largura para dispositivos menores */
+    max-width: 360px;
+    /* Largura máxima para telas maiores */
+    box-sizing: border-box;
+    text-align: center;
+    animation: fadeIn 1s ease-out;
+    margin: 100px auto;
+    /* Centraliza horizontalmente */
+}
+
+/* Estilo do título */
+h2 {
+    font-size: 1.75em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Estilo das labels */
+label {
+    display: block;
+    margin-bottom: 10px;
+    color: #555;
+    font-weight: bold;
+}
+
+/* Estilo dos campos de input */
+input {
+    width: calc(100% - 20px);
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+/* Estilo dos botões */
+button {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 12px;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    /* Efeito de elevação ao passar o mouse */
+}
+
+button:active {
+    background-color: #004494;
+    transform: translateY(0);
+    /* Efeito de clique */
+}
+
+/* Animação ao carregar a página */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilos Responsivos */
+@media (max-width: 600px) {
+    .login-container {
+        padding: 20px;
+        width: 95%;
+        /* Ajuste para telas menores */
+    }
+
+    h2 {
+        font-size: 1.5em;
+    }
+
+    input,
+    button {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 400px) {
+    .login-container {
+        width: 100%;
+        /* Ocupa a largura total em telas muito pequenas */
+    }
+
+    h2 {
+        font-size: 1.25em;
+    }
+
+    input,
+    button {
+        font-size: 12px;
+    }
+}
+
+/* Mantém o estilo original do footer */
+footer {
+    /* Aqui vai o estilo do footer padrão */
+}

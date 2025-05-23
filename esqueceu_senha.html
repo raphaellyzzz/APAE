@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esqueceu a senha?</title>
+    <link rel="shortcut icon" href="img/autismo_logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="css/esqueceu_senha.css">
+    <link rel="stylesheet" href="css/rodape.css">
+</head>
+
+<body>
+    <header id="navbar-placeholder"></header>
+
+    <main>
+        <div class="card">
+            <img src="img/APAE-Horizontal-png.png" alt="APAE">
+            <h2>Esqueceu a senha?</h2>
+            <form id="forgotPasswordForm">
+                <div class="input-wrapper">
+                    <span>Email:</span>
+                    <input type="email" name="email" id="forgotPasswordEmail" placeholder="Digite seu email" required>
+                </div>
+                <button type="button" onclick="sendResetCode()">Enviar código de redefinição</button>
+            </form>
+
+            <div id="resetCodeArea" style="display: none;">
+                <form id="resetCodeForm">
+                    <div class="input-wrapper">
+                        <span>Código de verificação:</span>
+                        <input type="text" name="resetCode" id="resetCodeInput" placeholder="Digite o código recebido"
+                            required>
+                    </div>
+                    <div class="input-wrapper">
+                        <div class="password-input-group">
+                            <div class="password-input">
+                                <span>Nova senha:</span>
+                                <input type="password" name="newPassword" id="newPasswordInput"
+                                    placeholder="Digite sua nova senha" required>
+                                <span class="toggle-password" onclick="togglePassword('newPasswordInput')">Mostrar
+                                    Senha</span>
+                            </div>
+                            <div class="password-input">
+                                <span>Confirmar nova senha:</span>
+                                <input type="password" name="confirmNewPassword" id="confirmNewPasswordInput"
+                                    placeholder="Confirme sua nova senha" required>
+                                <span class="toggle-password"
+                                    onclick="togglePassword('confirmNewPasswordInput')">Mostrar Senha</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="resetPasswordError" class="error-message"></div>
+                    <button type="button" onclick="resetPassword()">Redefinir senha</button>
+                </form>
+            </div>
+
+            <div id="resetSuccessMessage" style="display: none;">
+                <p>Sua senha foi atualizada com sucesso!</p>
+                <button onclick="returnToLogin()">Voltar para a tela de login</button>
+            </div>
+        </div>
+    </main>
+
+    <footer id="footer-placeholder"></footer>
+    <script src="js/rodape.js"></script>
+    <script src="js/esqueceu_senha.js"></script>
+    <script src="js/navbar.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,218 @@
+body {
+    background-image: url(../img/backgroud.jpeg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    padding-top: 70px;
+    /* Espaço para a navbar fixa */
+    height: 100vh;
+}
+
+.card {
+    background-color: rgba(255, 255, 255, 0.9);
+    max-width: 600px;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 800px;
+    margin: 80px auto 30px;
+    /* Adiciona 50px de margem superior */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.back-arrow a {
+    font-size: 24px;
+    text-decoration: none;
+    color: #000;
+}
+
+h3 {
+    margin-top: 20px;
+    text-align: center;
+    color: #333;
+}
+
+.input-wrapper {
+    margin-bottom: 15px;
+}
+
+.input-wrapper span {
+    display: block;
+
+    /* Estilos para a imagem de fundo */
+    body {
+        background: url('img/APAE-Horizontal-png.png') no-repeat center center fixed;
+        background-size: cover;
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .card {
+        background-color: rgba(255, 255, 255, 0.8);
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 800px;
+        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .container {
+        text-align: center;
+    }
+
+    .back-arrow a {
+        font-size: 24px;
+        text-decoration: none;
+        color: #333;
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+    }
+
+    button.login-link {
+        width: 100%;
+        padding: 15px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    button.login-link:hover {
+        background-color: #45a049;
+    }
+
+    .option-group,
+    .option-group-vertical {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .option-group-vertical {
+        flex-direction: column;
+    }
+
+    .grid-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .grid-container .column {
+        width: 48%;
+    }
+
+    @media screen and (max-width: 768px) {
+        .grid-container {
+            flex-direction: column;
+        }
+
+        .grid-container .column {
+            width: 100%;
+        }
+    }
+
+    /* Estilos para o rodapé */
+    #footer-placeholder {
+        background-color: #333;
+        color: white;
+        text-align: center;
+        padding: 20px 0;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+
+    #footer-placeholder p {
+        margin: 0;
+    }
+
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.input-wrapper input,
+.input-wrapper select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.input-wrapper.duo-fields {
+    display: flex;
+    justify-content: space-between;
+}
+
+.input-wrapper.duo-fields .input-field {
+    width: 48%;
+}
+
+.form-columns {
+    display: flex;
+    justify-content: space-between;
+}
+
+.left-column,
+.right-column {
+    width: 48%;
+}
+
+.option-group,
+.option-group-vertical,
+.radio-group {
+    display: flex;
+    gap: 15px;
+}
+
+.option-group-vertical {
+    flex-direction: column;
+}
+
+.submit-button-wrapper {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.submit-button-wrapper button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.submit-button-wrapper button:hover {
+    background-color: #45a049;
+}
+
+footer {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}

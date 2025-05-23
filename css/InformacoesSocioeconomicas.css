@@ -1,0 +1,238 @@
+body {
+    background-image: url(../img/backgroud.jpeg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    /* Ajuste a altura da navbar conforme necessário */
+    height: 60px;
+    /* Ajuste o valor conforme o tamanho da navbar */
+    background-color: #333;
+    /* Exemplo de cor para a navbar */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    /* Garante que a navbar fique acima do conteúdo */
+}
+
+.card {
+    width: 90%;
+    /* Ajuste para responsividade */
+    max-width: 600px;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    text-align: center;
+    margin: 80px auto 30px;
+    /* Ajuste o valor do margin-top para garantir que a card fique abaixo da navbar */
+    position: relative;
+    /* Permite ajustar a posição em relação ao seu pai */
+}
+
+.card img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.card .title h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.card .title h2 {
+    font-size: 15px;
+    margin: 0;
+    margin-bottom: 20px;
+}
+
+.card h3 {
+    margin: 0;
+    font-size: 18px;
+    margin-bottom: 40px;
+}
+
+.card .input-wrapper {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.card .input-wrapper span {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.card .input-wrapper select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    /* Espaçamento abaixo do select */
+    font-size: 14px;
+    color: #555;
+}
+
+
+.card input[type="text"],
+.card input[type="radio"] {
+    width: calc(100% - 10px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    display: block;
+    margin: 0 auto;
+}
+
+.card .option-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    /* Espaçamento entre grupos de opções */
+}
+
+.card .option-group label {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+    /* Espaçamento entre as opções */
+}
+
+.card .option-group input[type="radio"] {
+    margin-right: 5px;
+}
+
+.card .option-group-renda {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    text-align: left;
+}
+
+.card .option-group-renda .column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.card .option-group-renda label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    /* Espaçamento entre as linhas de opções */
+}
+
+.card .option-group-renda input[type="radio"] {
+    margin-right: 10px;
+    /* Espaçamento entre bolinha e texto */
+}
+
+.form-columns {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    /* Permite que os itens se alinhem corretamente em telas menores */
+}
+
+.left-column {
+    width: 100%;
+    /* Ajuste para telas menores */
+}
+
+.right-column {
+    width: 100%;
+    /* Ajuste para telas menores */
+}
+
+.right-column .input-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.right-column .input-wrapper span {
+    margin-bottom: 10px;
+}
+
+.right-column .option-group-renda {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    text-align: left;
+}
+
+.right-column .option-group label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.container {
+    position: relative;
+}
+
+.back-arrow {
+    position: absolute;
+    top: -100px;
+    left: 10px;
+}
+
+.back-arrow a {
+    text-decoration: none;
+    font-size: 32px;
+    color: #000;
+    /* Altere a cor conforme necessário */
+}
+
+/* styles.css */
+.back-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #f1f1f1;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+
+@media (min-width: 768px) {
+
+    .left-column,
+    .right-column {
+        width: 45%;
+        /* Ajuste para telas maiores */
+    }
+}
+
+.card .login-link {
+    display: inline-block;
+    width: 100%;
+    /* Ajuste para responsividade */
+    padding: 10px 0;
+    border: none;
+    border-radius: 10px;
+    background-color: rgb(90, 90, 231);
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 10px;
+}
+
+.card .login-link:hover {
+    background-color: #0056b3;
+}
