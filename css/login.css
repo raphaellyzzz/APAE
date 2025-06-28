@@ -7,28 +7,33 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
     padding-top: 70px;
-    /* Espaço suficiente para a navbar fixa */
-    height: 100vh;
+    min-height: 100vh; 
+    display: flex;
+    flex-direction: column;
 }
 
 /* Estilo do card */
 .card {
     width: 90%;
-    /* Ajusta a largura do card para se adaptar em dispositivos menores */
     max-width: 500px;
     padding: 40px;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #fff;
     text-align: center;
-    margin: 50px auto;
-    /* Centraliza o card horizontalmente */
+    margin: auto;
+    margin-top: 40px;
+    margin-bottom: 40px;
     position: relative;
-    /* Remove o posicionamento absoluto */
     top: 0;
-    /* Remove o posicionamento vertical fixo */
     transform: none;
-    /* Remove o efeito de transformação */
+}
+
+main.login-card {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Estilo da imagem do card */
