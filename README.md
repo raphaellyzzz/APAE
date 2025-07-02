@@ -1,5 +1,18 @@
 # APAE
 
+## 🧪 Funcionalidades
+✅ Login seguro com verificação de senha hash
+
+✅ Sessão de autenticação
+
+✅ Cadastro de funcionários
+
+✅ Cadastro e listagem de pacientes
+
+✅ Filtros, edições e ações sobre dados
+
+✅ Modal de adição de pacientes
+
 ## 📁 Estrutura do Projeto
 
 ```
@@ -120,3 +133,34 @@ $pass = '';
 http://localhost/APAE
 ```
   
+## Código de teste para a API caso encontre algum erro
+<p>Utilizei esses codigos (juntamente com os codigos comentados de log no 'api/processa_admin_login.php' para resolver alguns problemas da API. Pode criar os códigos e verificar por sua conta caso ache necessário.</p>
+
+- teste_senha.php
+```php
+<?php
+$senha_conhecida = '123456';
+echo "Hash para '123456': " . password_hash($senha_conhecida, PASSWORD_DEFAULT);
+?>
+```
+
+- teste_bd.php
+```php
+<?php
+require __DIR__ . '/config.php'; 
+
+try {
+    $stmt = $pdo->query("SELECT 1");
+    echo "Conexão com o banco de dados e query simples bem-sucedidas!";
+} catch (PDOException $e) {
+    echo "Erro na conexão ou query: " . $e->getMessage();
+}
+?>
+```
+
+teste_config.php
+```php
+<?php
+require __DIR__ . '/config.php';
+echo "Conectado com sucesso ao banco!";
+```
