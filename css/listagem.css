@@ -1,23 +1,36 @@
-/* listagem.css */
-
-/* Reset básico */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
+html, body {
+    height: 100%;
+    margin: 0; 
+    padding: 0; 
 }
 
-.container {
-    width: 90%;
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;      
+    font-family: Arial, sans-serif; 
+    background-color: #f4f4f4; 
+}
+
+main.container {
+    flex-grow: 1; 
+    width: 90%; 
     margin: 20px auto;
+    padding: 20px; 
+}
+
+footer {
+    flex-shrink: 0; 
+    background-color: #333;
+    color: white;
     padding: 20px;
+    text-align: center;
 }
 
 .card {
@@ -112,8 +125,8 @@ button.more-info-button:hover {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: 600px;
+    width: 60%;
+    max-width: 650px;
     padding: 20px;
     background-color: #ffffff;
     border-radius: 12px;
@@ -128,26 +141,6 @@ button.more-info-button:hover {
     margin-top: 0;
     font-size: 1.6em;
     color: #333;
-}
-
-.detail-card .details-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.detail-card .details-grid .detail-item {
-    flex: 1 1 calc(50% - 20px);
-    box-sizing: border-box;
-    margin-bottom: 10px;
-}
-
-.detail-card .details-grid .detail-item p {
-    margin: 0;
-}
-
-.detail-card .details-grid .detail-item strong {
-    color: #007bff;
 }
 
 .detail-card button {
@@ -166,7 +159,213 @@ button.more-info-button:hover {
     background-color: #c82333;
 }
 
-/* Responsividade */
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    align-items: center; 
+    justify-content: center;
+    overflow: auto;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 800px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    text-align: center;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-content h2 {
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+.close-button {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    right: 15px;
+    top: 10px;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#addPacienteForm {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.form-field-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 15px;
+    border: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.form-field-card label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #555;
+}
+
+.form-field-card input[type="text"],
+.form-field-card input[type="date"],
+.form-field-card input[type="number"],
+.form-field-card select,
+.form-field-card textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-field-card input:focus,
+.form-field-card select:focus,
+.form-field-card textarea:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-field-card textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-field-card.checkbox-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.modal-buttons {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+#addPacienteForm button[type="submit"],
+#addPacienteForm button[type="button"] {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    width: 150px;
+}
+
+#addPacienteForm button[type="button"] {
+    background-color: #6c757d;
+}
+
+#addPacienteForm button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+#addPacienteForm button[type="button"]:hover {
+    background-color: #5a6268;
+}
+
+#detail-content h2 {
+    margin-bottom: 30px;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px; 
+    margin-top: 20px;
+}
+
+.detail-item {
+    padding: 5px 0;
+}
+
+.detail-item p {
+    margin: 0; 
+}
+
+.detail-item p strong {
+    margin-right: 5px;
+    color: #007bff;
+}
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    align-items: start;
+    justify-items: start;
+    margin-top: 15px;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+
+.checkbox-group .group-title {
+    grid-column: 1 / -1;
+    text-align: left;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #555;
+}
+
+.checkbox-group > div {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-group input[type="checkbox"],
+.checkbox-group input[type="radio"] {
+    margin-right: 8px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkbox-group label {
+    font-size: 0.95em;
+    color: #444;
+    cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"]:hover + label,
+.checkbox-group input[type="radio"]:hover + label {
+    color: #007bff;
+}
 
 @media (max-width: 1200px) {
     .container {
@@ -206,6 +405,17 @@ button.more-info-button:hover {
     button {
         padding: 6px 12px;
         font-size: 12px;
+        margin: 3px 1px; /* Ajustado para melhor espaçamento em telas pequenas */
+    }
+
+    #addPacienteForm {
+        grid-template-columns: 1fr; /* Em telas pequenas, os "cards" se empilham */
+    }
+
+    .modal-buttons button {
+        width: 100%; /* Ocupa 100% da largura disponível */
+        max-width: 200px; /* Mantém um max-width para não ficar muito largo */
+        margin: 5px auto; /* Centraliza e adiciona margem vertical */
     }
 }
 
@@ -232,6 +442,15 @@ button.more-info-button:hover {
 
     .actions {
         text-align: center;
+    }
+
+    .modal-content {
+        padding: 20px; /* Reduz padding do modal em telas muito pequenas */
+    }
+
+    .modal-content h2 {
+        font-size: 1.5em; /* Ajusta o tamanho do título do modal */
+        margin-bottom: 15px;
     }
 }
 
@@ -264,6 +483,5 @@ button.more-info-button:hover {
         font-weight: bold;
         text-align: left;
         width: 50%;
-        white-space: nowrap;
     }
 }

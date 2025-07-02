@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -16,7 +17,10 @@
     <main class="login-card">
         <div class="card">
             <img src="img/APAE-Horizontal-png.png" alt="APAE">
-            <form id="loginForm" onsubmit="login(event)">
+            <?php if (isset($_SESSION['erro'])): ?>
+            <p class="erro"><?= $_SESSION['erro']; unset($_SESSION['erro']); ?></p>
+            <?php endif; ?> 
+            <form id="loginForm" onsubmit="login(event)" action="autenticar.php" method="POST">
                 <div class="input-wrapper">
                     <span><strong>Email institucional:</strong></span>
                     <input type="email" name="email" placeholder="Digite seu email" required>

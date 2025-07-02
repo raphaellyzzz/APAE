@@ -2,278 +2,588 @@ document.addEventListener('DOMContentLoaded', () => {
     loadPacientes();
     loadFuncionarios();
 
-    // Função para carregar e exibir a lista de funcionários
+   function showJanelaEdicao(title, body) {
+        document.getElementById('janelaEdicaoTitle').textContent = title;
+        document.getElementById('janelaEdicaoBody').textContent = body;
+        document.getElementById('janela-edicao').style.display = 'flex';
+    }
+
+    function closeJanelaEdicao() {
+        document.getElementById('janela-edicao').style.display = 'none';
+    }
+
+    window.addEventListener('click', (event) => {
+        const editModal = document.getElementById('editPacienteModal');
+        if (event.target === editModal) {
+            closeEditPacienteModal();
+        }
+    });
+
+    window.closeJanelaEdicao = closeJanelaEdicao;
+
+    function showEditPacienteModal() {
+        document.getElementById('editPacienteModal').style.display = 'flex';
+    }
+
+    function closeEditPacienteModal() {
+        document.getElementById('editPacienteModal').style.display = 'none';
+    }
+
+    window.showEditPacienteModal = showEditPacienteModal;
+    window.closeEditPacienteModal = closeEditPacienteModal;
+
     function loadFuncionarios() {
-        var funcionarios = JSON.parse(localStorage.getItem("users")) || [];
-        var userList = document.getElementById("userList");
+        fetch('api/get_funcionarios.php')
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error || 'Erro na rede ao carregar funcionários.'); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                var userList = document.getElementById("userList");
+                userList.innerHTML = "";
 
-        userList.innerHTML = "";
+                if (data.error) {
+                    userList.innerHTML = `<tr><td colspan="3">${data.error}</td></tr>`;
 
-        funcionarios.forEach((funcionario, index) => {
-            var row = document.createElement("tr");
+                    if (data.error.includes('Acesso não autorizado')) {
+                        alert(data.error);
+                        window.location.href = 'admin.html';
+                    }
+                    return;
+                }
+                if (data.length === 0) {
+                    userList.innerHTML = '<tr><td colspan="3">Nenhum funcionário cadastrado.</td></tr>';
+                    return;
+                }
 
-            var nomeCell = document.createElement("td");
-            nomeCell.textContent = funcionario.firstname;
-            row.appendChild(nomeCell);
+                data.forEach((funcionario) => {
+                    var row = document.createElement("tr");
 
-            var sobrenomeCell = document.createElement("td");
-            sobrenomeCell.textContent = funcionario.lastname;
-            row.appendChild(sobrenomeCell);
+                    var nomeCell = document.createElement("td");
+                    nomeCell.textContent = funcionario.nome;
+                    row.appendChild(nomeCell);
 
-            var emailCell = document.createElement("td");
-            emailCell.textContent = funcionario.email;
-            row.appendChild(emailCell);
+                    var emailCell = document.createElement("td");
+                    emailCell.textContent = funcionario.email;
+                    row.appendChild(emailCell);
 
-            var actionsCell = document.createElement("td");
+                    var actionsCell = document.createElement("td");
 
-            var editButton = document.createElement("button");
-            editButton.textContent = "Editar";
-            editButton.className = "edit-button";
-            editButton.onclick = function () {
-                // Implementar lógica de edição se necessário
-                editFuncionario(index);
-            };
-            actionsCell.appendChild(editButton);
+                    var editButton = document.createElement("button");
+                    editButton.textContent = "Editar";
+                    editButton.className = "edit-button";
+                    editButton.onclick = function () {
+                        editFuncionario(funcionario.id);
+                    };
+                    actionsCell.appendChild(editButton);
 
-            var deleteButton = document.createElement("button");
-            deleteButton.textContent = "Excluir";
-            deleteButton.className = "delete-button";
-            deleteButton.onclick = function () {
-                deleteFuncionario(index);
-            };
-            actionsCell.appendChild(deleteButton);
+                    var deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Excluir";
+                    deleteButton.className = "delete-button";
+                    deleteButton.onclick = function () {
+                        if (confirm(`Tem certeza que deseja excluir ${funcionario.nome}?`)) {
+                            deleteFuncionario(funcionario.id);
+                        }
+                    };
+                    actionsCell.appendChild(deleteButton);
 
-            row.appendChild(actionsCell);
-            userList.appendChild(row);
+                    row.appendChild(actionsCell);
+                    userList.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao carregar funcionários:', error);
+                alert('Ocorreu um erro ao carregar os dados dos funcionários.');
+            });
+    }
+
+    function deleteFuncionario(id) {
+        fetch('api/delete_funcionario.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: id })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error || 'Erro na rede ao excluir funcionário.'); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    loadFuncionarios();
+                } else {
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao excluir funcionário:', error);
+                alert('Ocorreu um erro ao excluir o funcionário: ' + error.message);
+            });
+    }
+
+    function editFuncionario(id) {
+        fetch(`api/get_funcionario_by_id.php?id=${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error || 'Erro na rede ao buscar funcionário para edição.'); });
+                }
+                return response.json();
+            })
+            .then(funcionario => {
+                if (funcionario.error) {
+                    alert(funcionario.error);
+                    return;
+                }
+
+                let newNome = prompt("Digite o novo nome:", funcionario.nome);
+                let newEmail = prompt("Digite o novo email:", funcionario.email);
+                let newSenha = prompt("Digite a nova senha (deixe em branco para não alterar):", "");
+                let newTipoUsuario = prompt("Digite o novo tipo de usuário (admin, funcionario, outro):", funcionario.tipo_usuario || 'funcionario');
+
+                if (newNome === null || newEmail === null || newTipoUsuario === null) {
+                    alert("Edição cancelada.");
+                    return;
+                }
+
+                let updatedData = {
+                    id: id,
+                    nome: newNome.trim(),
+                    email: newEmail.trim(),
+                    tipo_usuario: newTipoUsuario.trim()
+                };
+                if (newSenha.trim() !== "") {
+                    updatedData.senha = newSenha.trim();
+                }
+
+                fetch('api/edit_funcionario.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedData)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => { throw new Error(err.error || 'Erro na rede ao editar funcionário.'); });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            loadFuncionarios();
+                        } else {
+                            alert(data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao editar funcionário:', error);
+                        alert('Ocorreu um erro ao editar o funcionário: ' + error.message);
+                    });
+            })
+            .catch(error => {
+                console.error('Erro ao buscar dados do funcionário para edição:', error);
+                alert('Não foi possível carregar os dados do funcionário para edição: ' + error.message);
+            });
+    }
+
+    window.addNovoFuncionario = function () {
+        const nome = prompt("Nome do novo funcionário:");
+        const email = prompt("Email do novo funcionário:");
+        const senha = prompt("Senha do novo funcionário:");
+        const tipo = prompt("Tipo de usuário (admin, funcionario, outro):", "funcionario");
+
+        if (nome && email && senha) {
+            fetch('api/add_funcionarios.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nome, email, senha, tipo_usuario: tipo })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw new Error(err.error || 'Erro na rede ao adicionar funcionário.'); });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        loadFuncionarios();
+                    } else {
+                        alert(data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao adicionar funcionário:', error);
+                    alert('Erro ao adicionar funcionário: ' + error.message);
+                });
+        } else {
+            alert("Nome, email e senha são obrigatórios para adicionar um funcionário.");
+        }
+    };
+
+
+    const addPacienteModal = document.getElementById('addPacienteModal');
+    const addPacienteForm = document.getElementById('addPacienteForm');
+    const openAddPacienteModalBtn = document.getElementById('openAddPacienteModal');
+
+    if (openAddPacienteModalBtn) {
+        openAddPacienteModalBtn.addEventListener('click', () => { 
+            addPacienteForm.reset();
+            addPacienteModal.style.display = 'flex';
         });
     }
 
-    // Função para excluir um funcionário
-    function deleteFuncionario(index) {
-        let funcionarios = JSON.parse(localStorage.getItem("users")) || [];
-        funcionarios.splice(index, 1);
-        localStorage.setItem("users", JSON.stringify(funcionarios));
-        loadFuncionarios();
+    window.closeAddPacienteModal = function () {
+        addPacienteModal.style.display = 'none';
+        addPacienteForm.reset();
+    };
+
+    window.addEventListener('click', (event) => { 
+        if (event.target === addPacienteModal) {
+            closeAddPacienteModal();
+        }
+    });
+
+
+    if (addPacienteForm) {
+        addPacienteForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(addPacienteForm);
+            const pacienteData = {};
+
+            const checkboxFields = [
+                'fisioterapia', 'pintura', 'musica', 'hidroterapia', 'informatica',
+                'terapia_ocupacional', 'fonoaudiologia', 'psicologia'
+            ];
+
+            for (let [key, value] of formData.entries()) {
+                if (key === 'data_nascimento') { 
+                    if (value) { 
+                        const parts = value.split('/'); 
+                        if (parts.length === 3) {
+                            pacienteData[key] = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                        } else {
+                            pacienteData[key] = value;
+                        }
+                    } else {
+                        pacienteData[key] = null; 
+                    }
+                } else if (key === 'matriculado') {
+                    pacienteData[key] = parseInt(value);
+                } else if (checkboxFields.includes(key)) {
+                    pacienteData[key] = 1;
+                } else if (['valor_componente_familiar', 'renda_familiar'].includes(key)) {
+                    pacienteData[key] = value ? parseFloat(value) : null;
+                } else if (key === 'pessoas_trabalham') {
+                    pacienteData[key] = value ? parseInt(value) : null;
+                } else {
+                    pacienteData[key] = value;
+                }
+            }
+
+            checkboxFields.forEach(field => {
+                if (!formData.has(field)) {
+                    pacienteData[field] = 0; 
+                }
+            });
+
+            fetch('api/add_paciente.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(pacienteData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw new Error(err.error || 'Erro na rede ao adicionar paciente.'); });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        closeAddPacienteModal();
+                        loadPacientes();
+                    } else {
+                        alert(data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao adicionar paciente:', error);
+                    alert('Erro ao adicionar paciente: ' + error.message);
+                });
+        });
     }
 
-    // Função para editar um funcionário
-    // Função para editar um funcionário
-    // Função para editar um funcionário
-function editFuncionario(index) {
-    let funcionarios = JSON.parse(localStorage.getItem("users")) || [];
-    let funcionario = funcionarios[index];
-
-    // Solicitar novas informações através de prompts
-    let newFirstname = prompt("Digite o novo nome:", funcionario.firstname);
-    let newLastname = prompt("Digite o novo sobrenome:", funcionario.lastname);
-    let newEmail = prompt("Digite o novo email:", funcionario.email);
-
-    // Verificar se o usuário forneceu novos valores e atualizar
-    if (newFirstname !== null && newFirstname.trim() !== "") {
-        funcionario.firstname = newFirstname.trim();
-    }
-    if (newLastname !== null && newLastname.trim() !== "") {
-        funcionario.lastname = newLastname.trim();
-    }
-    if (newEmail !== null && newEmail.trim() !== "") {
-        funcionario.email = newEmail.trim();
-    }
-
-    // Atualizar o localStorage e recarregar a lista de funcionários
-    funcionarios[index] = funcionario;
-    localStorage.setItem("users", JSON.stringify(funcionarios));
-    loadFuncionarios();
-}
-
-
-
-    // Função para carregar e exibir a lista de pacientes
     function loadPacientes() {
-        var pacientes = JSON.parse(localStorage.getItem("pacientes")) || [];
-        var patientList = document.getElementById("patientList");
+        fetch('api/get_paciente.php')
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error || 'Erro na rede ao carregar pacientes.'); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                var patientList = document.getElementById("patientList");
+                patientList.innerHTML = "";
 
-        patientList.innerHTML = "";
+                if (data.error) {
+                    patientList.innerHTML = `<tr><td colspan="8">${data.error}</td></tr>`;
+                    if (data.error.includes('Acesso não autorizado')) {
+                        alert(data.error);
+                        window.location.href = 'admin.html';
+                    }
+                    return;
+                }
+                if (data.length === 0) {
+                    patientList.innerHTML = '<tr><td colspan="8">Nenhum paciente cadastrado.</td></tr>';
+                    return;
+                }
 
-        pacientes.forEach((paciente, index) => {
-            var row = document.createElement("tr");
+                data.forEach((paciente) => {
+                    var row = document.createElement("tr");
 
-            var nomeCell = document.createElement("td");
-            nomeCell.textContent = paciente.nome_usuario;
-            row.appendChild(nomeCell);
+                    var nomeCell = document.createElement("td");
+                    nomeCell.textContent = paciente.nome_completo;
+                    row.appendChild(nomeCell);
 
-            var cidCell = document.createElement("td");
-            cidCell.textContent = paciente.cid;
-            row.appendChild(cidCell);
+                    var cidCell = document.createElement("td");
+                    cidCell.textContent = paciente.cid;
+                    row.appendChild(cidCell);
 
-            var dataNascimentoCell = document.createElement("td");
-            dataNascimentoCell.textContent = paciente.data_nascimento;
-            row.appendChild(dataNascimentoCell);
+                    var dataNascimentoCell = document.createElement("td");
+                    dataNascimentoCell.textContent = paciente.data_nascimento;
+                    row.appendChild(dataNascimentoCell);
 
-            var nomeResponsavelCell = document.createElement("td");
-            nomeResponsavelCell.textContent = paciente.nome_responsavel;
-            row.appendChild(nomeResponsavelCell);
+                    var nomeResponsavelCell = document.createElement("td");
+                    nomeResponsavelCell.textContent = paciente.nome_responsavel;
+                    row.appendChild(nomeResponsavelCell);
 
-            var vinculoFamiliarCell = document.createElement("td");
-            vinculoFamiliarCell.textContent = paciente.vinculo_familiar;
-            row.appendChild(vinculoFamiliarCell);
+                    var vinculoFamiliarCell = document.createElement("td");
+                    vinculoFamiliarCell.textContent = paciente.vinculo_familiar;
+                    row.appendChild(vinculoFamiliarCell);
 
-            var telefoneCell = document.createElement("td");
-            telefoneCell.textContent = paciente.telefone;
-            row.appendChild(telefoneCell);
+                    var telefoneCell = document.createElement("td");
+                    telefoneCell.textContent = paciente.telefone;
+                    row.appendChild(telefoneCell);
 
-            var actionsCell = document.createElement("td");
+                    var actionsCell = document.createElement("td");
 
-            var editButton = document.createElement("button");
-            editButton.textContent = "Editar";
-            editButton.className = "edit-button";
-            editButton.onclick = function () {
-                // Implementar lógica de edição se necessário
-                editPaciente(index);
-            };
-            actionsCell.appendChild(editButton);
+                    var editButton = document.createElement("button");
+                    editButton.textContent = "Editar";
+                    editButton.className = "edit-button";
+                    editButton.onclick = function () {
+                        editPaciente(paciente.id);
+                    };
+                    actionsCell.appendChild(editButton);
 
-            var deleteButton = document.createElement("button");
-            deleteButton.textContent = "Excluir";
-            deleteButton.className = "delete-button";
-            deleteButton.onclick = function () {
-                deletePaciente(index);
-            };
-            actionsCell.appendChild(deleteButton);
+                    var deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Excluir";
+                    deleteButton.className = "delete-button";
+                    deleteButton.onclick = function () {
+                        if (confirm(`Tem certeza que deseja excluir ${paciente.nome_completo}?`)) {
+                            deletePaciente(paciente.id);
+                        }
+                    };
+                    actionsCell.appendChild(deleteButton);
 
-            var moreInfoButton = document.createElement("button");
-            moreInfoButton.textContent = "Mais Informações";
-            moreInfoButton.className = "more-info-button";
-            moreInfoButton.onclick = function () {
-                showDetails(paciente);
-            };
-            actionsCell.appendChild(moreInfoButton);
+                    var moreInfoButton = document.createElement("button");
+                    moreInfoButton.textContent = "Mais Informações";
+                    moreInfoButton.className = "more-info-button";
+                    moreInfoButton.onclick = function () {
+                        showDetails(paciente);
+                    };
+                    actionsCell.appendChild(moreInfoButton);
 
-            row.appendChild(actionsCell);
-            patientList.appendChild(row);
+                    row.appendChild(actionsCell);
+                    patientList.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao carregar pacientes:', error);
+                alert('Ocorreu um erro ao carregar os dados dos pacientes: ' + error.message);
+            });
+    }
+
+    function deletePaciente(id) {
+        fetch('api/delete_paciente.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: id })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error || 'Erro na rede ao excluir paciente.'); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    loadPacientes();
+                } else {
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao excluir paciente:', error);
+                alert('Ocorreu um erro ao excluir o paciente: ' + error.message);
+            });
+    }
+
+    window.editPaciente = function(id) {
+        fetch(`api/get_paciente_by_id.php?id=${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error || 'Erro na rede ao buscar paciente para edição.'); });
+                }
+                return response.json();
+            })
+            .then(paciente => {
+                if (paciente.error) {
+                    showJanelaEdicao('Erro ao Carregar Dados', paciente.error);
+                    return;
+                }
+
+                document.getElementById('edit_id').value = paciente.id;
+                document.getElementById('edit_nome_completo').value = paciente.nome_completo;
+                document.getElementById('edit_cid').value = paciente.cid;
+                document.getElementById('edit_data_nascimento').value = paciente.data_nascimento; 
+                document.getElementById('edit_nome_responsavel').value = paciente.nome_responsavel;
+                document.getElementById('edit_vinculo_familiar').value = paciente.vinculo_familiar;
+                document.getElementById('edit_telefone').value = paciente.telefone;
+                document.getElementById('edit_composicao_familiar').value = paciente.composicao_familiar;
+                document.getElementById('edit_valor_componente_familiar').value = paciente.valor_componente_familiar;
+                document.getElementById('edit_bpc').checked = paciente.bpc == 1; 
+                document.getElementById('edit_bolsa_familia').checked = paciente.bolsa_familia == 1; 
+                document.getElementById('edit_pessoas_trabalham').value = paciente.pessoas_trabalham;
+                document.getElementById('edit_renda_familiar').value = paciente.renda_familiar;
+                document.getElementById('edit_residencia').value = paciente.residencia;
+                document.getElementById('edit_matriculado').value = paciente.matriculado; 
+                document.getElementById('edit_mediador').value = paciente.mediador;
+                document.getElementById('edit_serie').value = paciente.serie;
+                document.getElementById('edit_escola').value = paciente.escola;
+                document.getElementById('edit_nome_escola').value = paciente.nome_escola;
+                document.getElementById('edit_turno').value = paciente.turno;
+                document.getElementById('edit_fisioterapia').checked = paciente.fisioterapia == 1;
+                document.getElementById('edit_pintura').checked = paciente.pintura == 1;
+                document.getElementById('edit_musica').checked = paciente.musica == 1;
+                document.getElementById('edit_hidroterapia').checked = paciente.hidroterapia == 1;
+                document.getElementById('edit_informatica').checked = paciente.informatica == 1;
+                document.getElementById('edit_terapia_ocupacional').checked = paciente.terapia_ocupacional == 1;
+                document.getElementById('edit_fonoaudiologia').checked = paciente.fonoaudiologia == 1;
+                document.getElementById('edit_psicologia').checked = paciente.psicologia == 1;
+
+                showEditPacienteModal();
+            })
+            .catch(error => {
+                console.error('Erro ao buscar dados do paciente para edição:', error);
+                showJanelaEdicao('Erro ao Carregar Paciente', 'Não foi possível carregar os dados do paciente para edição: ' + error.message);
+            });
+    };
+
+    const editPacienteForm = document.getElementById('editPacienteForm');
+    if (editPacienteForm) {
+        editPacienteForm.addEventListener('submit', function(event) {
+            event.preventDefault(); 
+
+            const formData = new FormData(editPacienteForm);
+            const updatedData = {};
+            for (const [key, value] of formData.entries()) {
+                if (['bpc', 'bolsa_familia', 'fisioterapia', 'pintura', 'musica', 'hidroterapia', 'informatica', 'terapia_ocupacional', 'fonoaudiologia', 'psicologia'].includes(key)) {
+                    updatedData[key] = value === '1' ? 1 : 0; 
+                } else {
+                    updatedData[key] = value;
+                }
+            }
+            updatedData.id = parseInt(updatedData.id);
+
+            fetch('api/edit_pacientes.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw new Error(err.error || 'Erro na rede ao editar paciente.'); });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        showJanelaEdicao('Sucesso!', data.message);
+                        closeEditPacienteModal(); 
+                        loadPacientes();
+                    } else {
+                        showJanelaEdicao('Erro na Edição', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao editar paciente:', error);
+                    showJanelaEdicao('Erro de Comunicação', 'Ocorreu um erro ao editar o paciente: ' + error.message);
+                });
         });
     }
 
-    // Função para excluir um paciente
-    function deletePaciente(index) {
-        let pacientes = JSON.parse(localStorage.getItem("pacientes")) || [];
-        pacientes.splice(index, 1);
-        localStorage.setItem("pacientes", JSON.stringify(pacientes));
-        loadPacientes();
-    }
-
-    // Função para editar um paciente
-    // Função para editar um paciente
-function editPaciente(index) {
-    let pacientes = JSON.parse(localStorage.getItem("pacientes")) || [];
-    let paciente = pacientes[index];
-
-    // Solicitar novas informações através de prompts
-    let newNome = prompt("Digite o novo nome:", paciente.nome_usuario);
-    let newCid = prompt("Digite o novo CID:", paciente.cid);
-    let newDataNascimento = prompt("Digite a nova data de nascimento (YYYY-MM-DD):", paciente.data_nascimento);
-    let newNomeResponsavel = prompt("Digite o novo nome do responsável:", paciente.nome_responsavel);
-    let newVinculoFamiliar = prompt("Digite o novo vínculo familiar:", paciente.vinculo_familiar);
-    let newTelefone = prompt("Digite o novo telefone:", paciente.telefone);
-    let newComposicaoFamiliar = prompt("Digite a nova composição familiar:", paciente.composicao_familiar);
-    let newValorComponenteFamiliar = prompt("Digite o novo valor do componente familiar:", paciente.valor_componente_familiar);
-    let newBpc = prompt("Digite o novo valor do BPC:", paciente.bpc);
-    let newBolsaFamilia = prompt("Digite o novo valor do Bolsa Família:", paciente.bolsa_familia);
-    let newPessoasTrabalham = prompt("Digite o novo número de pessoas que trabalham:", paciente.pessoas_trabalham);
-    let newRendaFamiliar = prompt("Digite a nova renda familiar:", paciente.renda_familiar);
-    let newResidencia = prompt("Digite o novo tipo de residência:", paciente.residencia);
-    let newMatriculado = prompt("Digite o status de matriculado (Sim/Não):", paciente.matriculado);
-    let newMediador = prompt("Digite o nome do mediador:", paciente.mediador);
-    let newSerie = prompt("Digite a nova série:", paciente.serie);
-    let newEscola = prompt("Digite o nome da escola:", paciente.escola);
-    let newNomeEscola = prompt("Digite o nome da escola:", paciente.nome_escola);
-    let newTurno = prompt("Digite o novo turno:", paciente.turno);
-    let newFisioterapia = prompt("Digite o status de fisioterapia (Sim/Não):", paciente.fisioterapia);
-    let newPintura = prompt("Digite o status de pintura (Sim/Não):", paciente.pintura);
-    let newMusica = prompt("Digite o status de música (Sim/Não):", paciente.musica);
-    let newHidroterapia = prompt("Digite o status de hidroterapia (Sim/Não):", paciente.hidroterapia);
-    let newInformatica = prompt("Digite o status de informática (Sim/Não):", paciente.informatica);
-    let newTerapiaOcupacional = prompt("Digite o status de terapia ocupacional (Sim/Não):", paciente.terapia_ocupacional);
-    let newFonoaudiologia = prompt("Digite o status de fonoaudiologia (Sim/Não):", paciente.fonoaudiologia);
-    let newPsicologia = prompt("Digite o status de psicologia (Sim/Não):", paciente.psicologia);
-
-    // Atualizar o objeto paciente se novos valores forem fornecidos
-    paciente.nome_usuario = newNome !== null && newNome.trim() !== "" ? newNome.trim() : paciente.nome_usuario;
-    paciente.cid = newCid !== null && newCid.trim() !== "" ? newCid.trim() : paciente.cid;
-    paciente.data_nascimento = newDataNascimento !== null && newDataNascimento.trim() !== "" ? newDataNascimento.trim() : paciente.data_nascimento;
-    paciente.nome_responsavel = newNomeResponsavel !== null && newNomeResponsavel.trim() !== "" ? newNomeResponsavel.trim() : paciente.nome_responsavel;
-    paciente.vinculo_familiar = newVinculoFamiliar !== null && newVinculoFamiliar.trim() !== "" ? newVinculoFamiliar.trim() : paciente.vinculo_familiar;
-    paciente.telefone = newTelefone !== null && newTelefone.trim() !== "" ? newTelefone.trim() : paciente.telefone;
-    paciente.composicao_familiar = newComposicaoFamiliar !== null && newComposicaoFamiliar.trim() !== "" ? newComposicaoFamiliar.trim() : paciente.composicao_familiar;
-    paciente.valor_componente_familiar = newValorComponenteFamiliar !== null && newValorComponenteFamiliar.trim() !== "" ? newValorComponenteFamiliar.trim() : paciente.valor_componente_familiar;
-    paciente.bpc = newBpc !== null && newBpc.trim() !== "" ? newBpc.trim() : paciente.bpc;
-    paciente.bolsa_familia = newBolsaFamilia !== null && newBolsaFamilia.trim() !== "" ? newBolsaFamilia.trim() : paciente.bolsa_familia;
-    paciente.pessoas_trabalham = newPessoasTrabalham !== null && newPessoasTrabalham.trim() !== "" ? newPessoasTrabalham.trim() : paciente.pessoas_trabalham;
-    paciente.renda_familiar = newRendaFamiliar !== null && newRendaFamiliar.trim() !== "" ? newRendaFamiliar.trim() : paciente.renda_familiar;
-    paciente.residencia = newResidencia !== null && newResidencia.trim() !== "" ? newResidencia.trim() : paciente.residencia;
-    paciente.matriculado = newMatriculado !== null && newMatriculado.trim() !== "" ? newMatriculado.trim() : paciente.matriculado;
-    paciente.mediador = newMediador !== null && newMediador.trim() !== "" ? newMediador.trim() : paciente.mediador;
-    paciente.serie = newSerie !== null && newSerie.trim() !== "" ? newSerie.trim() : paciente.serie;
-    paciente.escola = newEscola !== null && newEscola.trim() !== "" ? newEscola.trim() : paciente.escola;
-    paciente.nome_escola = newNomeEscola !== null && newNomeEscola.trim() !== "" ? newNomeEscola.trim() : paciente.nome_escola;
-    paciente.turno = newTurno !== null && newTurno.trim() !== "" ? newTurno.trim() : paciente.turno;
-    paciente.fisioterapia = newFisioterapia !== null && newFisioterapia.trim() !== "" ? newFisioterapia.trim() : paciente.fisioterapia;
-    paciente.pintura = newPintura !== null && newPintura.trim() !== "" ? newPintura.trim() : paciente.pintura;
-    paciente.musica = newMusica !== null && newMusica.trim() !== "" ? newMusica.trim() : paciente.musica;
-    paciente.hidroterapia = newHidroterapia !== null && newHidroterapia.trim() !== "" ? newHidroterapia.trim() : paciente.hidroterapia;
-    paciente.informatica = newInformatica !== null && newInformatica.trim() !== "" ? newInformatica.trim() : paciente.informatica;
-    paciente.terapia_ocupacional = newTerapiaOcupacional !== null && newTerapiaOcupacional.trim() !== "" ? newTerapiaOcupacional.trim() : paciente.terapia_ocupacional;
-    paciente.fonoaudiologia = newFonoaudiologia !== null && newFonoaudiologia.trim() !== "" ? newFonoaudiologia.trim() : paciente.fonoaudiologia;
-    paciente.psicologia = newPsicologia !== null && newPsicologia.trim() !== "" ? newPsicologia.trim() : paciente.psicologia;
-
-    // Atualizar o localStorage e recarregar a lista de pacientes
-    pacientes[index] = paciente;
-    localStorage.setItem("pacientes", JSON.stringify(pacientes));
-    loadPacientes();
-}
-
-
-    // Função para mostrar detalhes do paciente
     function showDetails(paciente) {
         const detailCard = document.getElementById("detail-card");
         const detailContent = document.getElementById("detail-content");
 
+        const formatBoolean = (value) => value ? 'Sim' : 'Não';
+
         detailContent.innerHTML = `
             <h3>Detalhes do Paciente</h3>
-            <p><strong>Nome:</strong> ${paciente.nome_usuario}</p>
-            <p><strong>CID:</strong> ${paciente.cid}</p>
-            <p><strong>Data de Nascimento:</strong> ${paciente.data_nascimento}</p>
-            <p><strong>Nome do Responsável:</strong> ${paciente.nome_responsavel}</p>
-            <p><strong>Vínculo Familiar:</strong> ${paciente.vinculo_familiar}</p>
-            <p><strong>Telefone:</strong> ${paciente.telefone}</p>
-            <p><strong>Composição Familiar:</strong> ${paciente.composicao_familiar}</p>
-            <p><strong>Valor do Componente Familiar:</strong> ${paciente.valor_componente_familiar}</p>
-            <p><strong>BPC:</strong> ${paciente.bpc}</p>
-            <p><strong>Bolsa Família:</strong> ${paciente.bolsa_familia}</p>
-            <p><strong>Pessoas que Trabalham:</strong> ${paciente.pessoas_trabalham}</p>
-            <p><strong>Renda Familiar:</strong> ${paciente.renda_familiar}</p>
-            <p><strong>Residência:</strong> ${paciente.residencia}</p>
-            <p><strong>Matriculado:</strong> ${paciente.matriculado}</p>
-            <p><strong>Mediador:</strong> ${paciente.mediador}</p>
-            <p><strong>Série:</strong> ${paciente.serie}</p>
-            <p><strong>Escola:</strong> ${paciente.escola}</p>
-            <p><strong>Nome da Escola:</strong> ${paciente.nome_escola}</p>
-            <p><strong>Turno:</strong> ${paciente.turno}</p>
-            <p><strong>Fisioterapia:</strong> ${paciente.fisioterapia}</p>
-            <p><strong>Pintura:</strong> ${paciente.pintura}</p>
-            <p><strong>Música:</strong> ${paciente.musica}</p>
-            <p><strong>Hidroterapia:</strong> ${paciente.hidroterapia}</p>
-            <p><strong>Informática:</strong> ${paciente.informatica}</p>
-            <p><strong>Terapia Ocupacional:</strong> ${paciente.terapia_ocupacional}</p>
-            <p><strong>Fonoaudiologia:</strong> ${paciente.fonoaudiologia}</p>
-            <p><strong>Psicologia:</strong> ${paciente.psicologia}</p>
+            <br>
+            <div class="details-grid">
+                <div class="detail-item"><p><strong>Nome:</strong> ${paciente.nome_completo}</p></div>
+                <div class="detail-item"><p><strong>CID:</strong> ${paciente.cid}</p></div>
+                <div class="detail-item"><p><strong>Data de Nascimento:</strong> ${paciente.data_nascimento}</p></div>
+                <div class="detail-item"><p><strong>Nome do Responsável:</strong> ${paciente.nome_responsavel}</p></div>
+                <div class="detail-item"><p><strong>Vínculo Familiar:</strong> ${paciente.vinculo_familiar}</p></div>
+                <div class="detail-item"><p><strong>Telefone:</strong> ${paciente.telefone}</p></div>
+                <div class="detail-item full-width"><p><strong>Composição Familiar:</strong> ${paciente.composicao_familiar}</p></div>
+                <div class="detail-item"><p><strong>Valor do Componente Familiar:</strong> ${paciente.valor_componente_familiar}</p></div>
+                <div class="detail-item"><p><strong>BPC:</strong> ${paciente.bpc}</p></div>
+                <div class="detail-item"><p><strong>Bolsa Família:</strong> ${paciente.bolsa_familia}</p></div>
+                <div class="detail-item"><p><strong>Pessoas que Trabalham:</strong> ${paciente.pessoas_trabalham}</p></div>
+                <div class="detail-item"><p><strong>Renda Familiar:</strong> ${paciente.renda_familiar}</p></div>
+                <div class="detail-item"><p><strong>Residência:</strong> ${paciente.residencia}</p></div>
+                <div class="detail-item"><p><strong>Matriculado:</strong> ${formatBoolean(paciente.matriculado)}</p></div>
+                <div class="detail-item"><p><strong>Mediador:</strong> ${paciente.mediador}</p></div>
+                <div class="detail-item"><p><strong>Série:</strong> ${paciente.serie}</p></div>
+                <div class="detail-item"><p><strong>Escola:</strong> ${paciente.escola}</p></div>
+                <div class="detail-item"><p><strong>Nome da Escola:</strong> ${paciente.nome_escola}</p></div>
+                <div class="detail-item"><p><strong>Turno:</strong> ${paciente.turno}</p></div>
+                <div class="detail-item"><p><strong>Fisioterapia:</strong> ${formatBoolean(paciente.fisioterapia)}</p></div>
+                <div class="detail-item"><p><strong>Pintura:</strong> ${formatBoolean(paciente.pintura)}</p></div>
+                <div class="detail-item"><p><strong>Música:</strong> ${formatBoolean(paciente.musica)}</p></div>
+                <div class="detail-item"><p><strong>Hidroterapia:</strong> ${formatBoolean(paciente.hidroterapia)}</p></div>
+                <div class="detail-item"><p><strong>Informática:</strong> ${formatBoolean(paciente.informatica)}</p></div>
+                <div class="detail-item"><p><strong>Terapia Ocupacional:</strong> ${formatBoolean(paciente.terapia_ocupacional)}</p></div>
+                <div class="detail-item"><p><strong>Fonoaudiologia:</strong> ${formatBoolean(paciente.fonoaudiologia)}</p></div>
+                <div class="detail-item"><p><strong>Psicologia:</strong> ${formatBoolean(paciente.psicologia)}</p></div>
+            </div>
         `;
 
         detailCard.style.display = 'block';
     }
 
-    // Função para fechar o card de detalhes
     window.closeDetails = function () {
         const detailCard = document.getElementById("detail-card");
         detailCard.style.display = 'none';
     }
+
 });
