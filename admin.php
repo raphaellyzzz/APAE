@@ -1,3 +1,8 @@
+<?php session_start(); ?>
+<?php if (!empty($_SESSION['erro_admin'])): ?>
+  <p class="erro"><?= $_SESSION['erro_admin']; unset($_SESSION['erro_admin']); ?></p>
+<?php endif; ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -17,12 +22,12 @@
     <div class="content-wrapper">
         <div class="login-container">
             <h2>Login de Admin</h2>
-            <form id="loginForm">
-                <label for="username">Usuário:</label>
-                <input type="text" id="username" name="username" required>
+            <form id="adminLoginForm" action="api/processa_admin_login.php" method="POST">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
 
-                <label for="password">Senha:</label>
-                <input type="password" id="password" name="password" required>
+                <label for="senha">Senha:</label>
+                <input type="password" id="senha" name="senha" required>
 
                 <button type="submit">Entrar</button>
             </form>
@@ -33,7 +38,6 @@
 
     <script src="js/rodape.js"></script>
     <script src="js/navbar.js"></script>
-    <script src="js/admin.js"></script>
 </body>
 
 </html>
