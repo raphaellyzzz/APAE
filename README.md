@@ -24,7 +24,7 @@ APAE/
 ├── img/                    ← imagens (logos, ícones, etc)
 │   └── autismo_logo.png
 │
-├── fonts/                  ← (opcional) se estiver usando fontes externas
+├── fonts/                  ← fontes
 │
 ├── index.html             ← página inicial
 ├── admin.php              ← login do admin
