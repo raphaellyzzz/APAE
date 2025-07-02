@@ -4,26 +4,41 @@
 
 ```
 APAE/
-├── api/
+├── api/                    ← arquivos PHP responsáveis pela lógica e banco
 │   ├── config.php
 │   ├── processa_admin_login.php
-│   ├── [outros scripts PHP de backend]
-├── css/
+│   ├── autenticar.php
+│   └── outros arquivos de backend
+│
+├── css/                    ← arquivos de estilo
 │   ├── admin.css
-│   ├── listagem.css
 │   ├── navbar.css
 │   ├── rodape.css
-├── js/
+│   └── listagem.css
+│
+├── js/                     ← scripts JavaScript
 │   ├── navbar.js
 │   ├── rodape.js
-│   ├── listagem.js
-├── img/
+│   └── listagem.js
+│
+├── img/                    ← imagens (logos, ícones, etc)
 │   └── autismo_logo.png
-├── admin.php
-├── listagem.php
-├── cadastro.html
-├── login.php
-├── README.md
+│
+├── fonts/                  ← (opcional) se estiver usando fontes externas
+│
+├── index.html             ← página inicial
+├── admin.php              ← login do admin
+├── login.php              ← login de usuário comum
+├── listagem.php           ← painel do admin (após login)
+├── cadastro.html          ← formulário de cadastro de funcionário
+├── cadastroPaciente.html  ← formulário de cadastro de paciente
+├── esqueceu_senha.html    ← recuperação de senha
+├── navbar.html            ← componente reutilizável do menu
+├── rodape.html            ← componente do rodapé
+├── sobre.html             ← página "Sobre"
+├── contato.html           ← página de contato
+└── README.md              ← documentação do projeto
+
 ```
 ## 🛠 Tecnologias Utilizadas
 
