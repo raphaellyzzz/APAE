@@ -580,6 +580,261 @@ document.addEventListener('DOMContentLoaded', () => {
 
         detailCard.style.display = 'block';
     }
+    
+    function showAddFuncionarioModal() {
+        document.getElementById('addFuncionarioModal').style.display = 'flex';
+        document.getElementById('addFuncionarioForm').reset(); 
+        document.getElementById('passwordMatchError').textContent = ''; 
+    }
+
+    function closeAddFuncionarioModal() {
+        document.getElementById('addFuncionarioModal').style.display = 'none';
+    }
+
+    document.getElementById('openAddFuncionarioModal').addEventListener('click', showAddFuncionarioModal);
+
+    window.addEventListener('click', (event) => {
+        const addFuncionarioModal = document.getElementById('addFuncionarioModal');
+        if (event.target === addFuncionarioModal) {
+            closeAddFuncionarioModal();
+        }
+    });
+
+    document.getElementById('addFuncionarioForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const nome = document.getElementById('add_nome').value;
+        const email = document.getElementById('add_email').value;
+        const senha = document.getElementById('add_senha').value;
+        const confirm_senha = document.getElementById('add_confirm_senha').value;
+        const tipo_usuario = document.getElementById('add_tipo_usuario').value;
+        const passwordMatchError = document.getElementById('passwordMatchError');
+
+        if (senha !== confirm_senha) {
+            passwordMatchError.textContent = 'As senhas não coincidem!';
+            return;
+        } else {
+            passwordMatchError.textContent = '';
+        }
+
+        try {
+            const response = await fetch('api/add_funcionarios.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nome,
+                    email,
+                    senha,
+                    tipo_usuario
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                if (result.success) {
+                    showJanelaEdicao('Sucesso!', result.message);
+                    closeAddFuncionarioModal();
+                    loadFuncionarios(); 
+                } else {
+                    showJanelaEdicao('Erro!', result.error || 'Erro ao adicionar funcionário.');
+                }
+            } else {
+                showJanelaEdicao('Erro na Requisição!', result.error || 'Ocorreu um erro ao processar sua solicitação.');
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            showJanelaEdicao('Erro de Conexão!', 'Não foi possível conectar ao servidor. Tente novamente.');
+        }
+    });
+
+    document.getElementById('add_confirm_senha').addEventListener('input', function() {
+        const password = document.getElementById('add_senha').value;
+        const confirmPassword = this.value;
+        const passwordMatchError = document.getElementById('passwordMatchError');
+
+        if (password !== confirmPassword) {
+            passwordMatchError.textContent = 'As senhas não coincidem!';
+        } else {
+            passwordMatchError.textContent = '';
+        }
+    });
+
+    function loadFuncionarios() {
+        fetch('api/get_funcionarios.php')
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error || 'Erro na resposta do servidor.'); });
+                }
+                return response.json();
+            })
+            .then(funcionarios => {
+                const userList = document.getElementById('userList');
+                userList.innerHTML = ''; 
+                if (funcionarios.length === 0) {
+                    userList.innerHTML = '<tr><td colspan="4">Nenhum funcionário cadastrado.</td></tr>';
+                    return;
+                }
+                funcionarios.forEach(funcionario => {
+                    const row = userList.insertRow();
+                    row.insertCell(0).textContent = funcionario.nome;
+                    row.insertCell(1).textContent = funcionario.email;
+                    row.insertCell(2).textContent = funcionario.tipo_usuario; 
+                    const actionsCell = row.insertCell(3);
+
+                    const editButton = document.createElement('button');
+                    editButton.textContent = 'Editar';
+                    editButton.classList.add('edit-button');
+                    editButton.onclick = () => editFuncionario(funcionario.id);
+                    actionsCell.appendChild(editButton);
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Excluir';
+                    deleteButton.classList.add('delete-button');
+                    deleteButton.onclick = () => deleteFuncionario(funcionario.id, funcionario.nome);
+                    actionsCell.appendChild(deleteButton);
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao carregar funcionários:', error);
+                showJanelaEdicao('Erro ao Carregar', error.message || 'Não foi possível carregar os funcionários.');
+            });
+    }
+
+    async function editFuncionario(id) {
+        try {
+            const response = await fetch(`api/get_funcionario_by_id.php?id=${id}`);
+            const funcionario = await response.json();
+
+            if (!response.ok || funcionario.error) {
+                throw new Error(funcionario.error || 'Funcionário não encontrado.');
+            }
+
+            document.getElementById('edit_funcionario_id').value = funcionario.id;
+            document.getElementById('edit_nome').value = funcionario.nome;
+            document.getElementById('edit_email').value = funcionario.email;
+            document.getElementById('edit_tipo_usuario').value = funcionario.tipo_usuario;
+            document.getElementById('edit_senha').value = ''; 
+            document.getElementById('edit_confirm_senha').value = ''; 
+            document.getElementById('editPasswordMatchError').textContent = ''; 
+
+            document.getElementById('editFuncionarioModal').style.display = 'flex';
+        } catch (error) {
+            console.error('Erro ao buscar funcionário para edição:', error);
+            showJanelaEdicao('Erro na Edição', error.message || 'Não foi possível carregar os dados do funcionário para edição.');
+        }
+    }
+
+    function closeEditFuncionarioModal() {
+        document.getElementById('editFuncionarioModal').style.display = 'none';
+    }
+
+    document.getElementById('editFuncionarioForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const id = document.getElementById('edit_funcionario_id').value;
+        const nome = document.getElementById('edit_nome').value;
+        const email = document.getElementById('edit_email').value;
+        const senha = document.getElementById('edit_senha').value;
+        const confirm_senha = document.getElementById('edit_confirm_senha').value;
+        const tipo_usuario = document.getElementById('edit_tipo_usuario').value;
+        const editPasswordMatchError = document.getElementById('editPasswordMatchError');
+
+        if (senha && senha !== confirm_senha) {
+            editPasswordMatchError.textContent = 'As senhas não coincidem!';
+            return;
+        } else {
+            editPasswordMatchError.textContent = '';
+        }
+
+        const data = {
+            id,
+            nome,
+            email,
+            tipo_usuario
+        };
+        if (senha) { 
+            data.senha = senha;
+        }
+
+        try {
+            const response = await fetch('api/edit_funcionarios.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                if (result.success) {
+                    showJanelaEdicao('Sucesso!', result.message);
+                    closeEditFuncionarioModal();
+                    loadFuncionarios();
+                } else {
+                    showJanelaEdicao('Erro!', result.error || 'Erro ao atualizar funcionário.');
+                }
+            } else {
+                showJanelaEdicao('Erro na Requisição!', result.error || 'Ocorreu um erro ao processar sua solicitação.');
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            showJanelaEdicao('Erro de Conexão!', 'Não foi possível conectar ao servidor. Tente novamente.');
+        }
+    });
+
+    document.getElementById('edit_confirm_senha').addEventListener('input', function() {
+        const password = document.getElementById('edit_senha').value;
+        const confirmPassword = this.value;
+        const errorElement = document.getElementById('editPasswordMatchError');
+
+        if (password && password !== confirmPassword) { 
+            errorElement.textContent = 'As senhas não coincidem!';
+        } else {
+            errorElement.textContent = '';
+        }
+    });
+
+    async function deleteFuncionario(id, nome) {
+        if (confirm(`Tem certeza que deseja excluir o funcionário ${nome}?`)) {
+            try {
+                const response = await fetch('api/delete_funcionario.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    if (result.success) {
+                        showJanelaEdicao('Sucesso!', result.message);
+                        loadFuncionarios(); // Recarrega a lista
+                    } else {
+                        showJanelaEdicao('Erro!', result.error || 'Erro ao excluir funcionário.');
+                    }
+                } else {
+                    showJanelaEdicao('Erro na Requisição!', result.error || 'Ocorreu um erro ao processar sua solicitação.');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showJanelaEdicao('Erro de Conexão!', 'Não foi possível conectar ao servidor. Tente novamente.');
+            }
+        }
+    }
+
+    window.editFuncionario = editFuncionario;
+    window.deleteFuncionario = deleteFuncionario;
+    window.closeEditFuncionarioModal = closeEditFuncionarioModal;
+
 
     window.closeDetails = function () {
         const detailCard = document.getElementById("detail-card");

@@ -7,8 +7,8 @@ session_start();
 error_log("DEBUG: listagem.php - Pagina acessada. Valor de 'admin_logged_in' na sessao: " . var_export($_SESSION['admin_logged_in'] ?? false, true));
 
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    error_log("DEBUG: listagem.php - Redirecionando para admin.php (sessao nao valida).");
-    header('Location: admin.php');
+    error_log("DEBUG: listagem.php - Redirecionando para login.php (sessao nao valida).");
+    header('Location: login.php');
     exit;
 }
 ?>
@@ -36,14 +36,14 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                     <tr>
                         <th>Nome</th>
                         <th>Email</th>
+                        <th>Tipo</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody id="userList">
-                </tbody>
+                <tbody id="userList"></tbody>
             </table>
             <div class="actions">
-                <button onclick="location.href='cadastro.html'">Adicionar Novo Funcionário</button>
+                 <button id="openAddFuncionarioModal" class="add-button">Adicionar Novo Funcionário</button>
             </div>
         </section>
 
@@ -69,6 +69,78 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
             </div>
         </section>
     </main>
+
+     <div id="addFuncionarioModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeAddFuncionarioModal()">&times;</span>
+            <h2>Adicionar Novo Funcionário</h2>
+            <form id="addFuncionarioForm">
+                <div class="input-group">
+                    <label for="add_nome">Nome:</label>
+                    <input type="text" id="add_nome" name="nome" required>
+                </div>
+                <div class="input-group">
+                    <label for="add_email">Email:</label>
+                    <input type="email" id="add_email" name="email" required>
+                </div>
+                <div class="input-group">
+                    <label for="add_senha">Senha:</label>
+                    <input type="password" id="add_senha" name="senha" required>
+                </div>
+                <div class="input-group">
+                    <label for="add_confirm_senha">Confirmar Senha:</label>
+                    <input type="password" id="add_confirm_senha" name="confirm_senha" required>
+                    <p id="passwordMatchError" class="error-message"></p>
+                </div>
+                <div class="input-group">
+                    <label for="add_tipo_usuario">Tipo de Usuário:</label>
+                    <select id="add_tipo_usuario" name="tipo_usuario" required>
+                        <option value="funcionario">Funcionário</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+                <button type="submit">Cadastrar Funcionário</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="editFuncionarioModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeEditFuncionarioModal()">&times;</span>
+            <h2>Editar Funcionário</h2>
+            <form id="editFuncionarioForm">
+                <input type="hidden" id="edit_funcionario_id" name="id">
+                <div class="input-group">
+                    <label for="edit_nome">Nome:</label>
+                    <input type="text" id="edit_nome" name="nome" required>
+                </div>
+                <div class="input-group">
+                    <label for="edit_email">Email:</label>
+                    <input type="email" id="edit_email" name="email" required>
+                </div>
+                <div class="input-group">
+                    <label for="edit_senha">Nova Senha (opcional):</label>
+                    <input type="password" id="edit_senha" name="senha">
+                </div>
+                <div class="input-group">
+                    <label for="edit_confirm_senha">Confirmar Nova Senha:</label>
+                    <input type="password" id="edit_confirm_senha" name="confirm_senha">
+                    <p id="editPasswordMatchError" class="error-message"></p>
+                </div>
+                <div class="input-group">
+                    <label for="edit_tipo_usuario">Tipo de Usuário:</label>
+                    <select id="edit_tipo_usuario" name="tipo_usuario" required>
+                        <option value="funcionario">Funcionário</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit">Salvar Alterações</button>
+                    <button type="button" onclick="closeEditFuncionarioModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <div id="addPacienteModal" class="modal">
         <div class="modal-content">
@@ -175,14 +247,14 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 
                <div class="form-field-card checkbox-group">
                     <label class="group-title">Terapias:</label>
-                    <div><input type="checkbox" id="edit_fisioterapia" name="fisioterapia" value="1"> <label for="edit_fisioterapia">Fisioterapia</label></div>
-                    <div><input type="checkbox" id="edit_pintura" name="pintura" value="1"> <label for="edit_pintura">Pintura</label></div>
-                    <div><input type="checkbox" id="edit_musica" name="musica" value="1"> <label for="edit_musica">Música</label></div>
-                    <div><input type="checkbox" id="edit_hidroterapia" name="hidroterapia" value="1"> <label for="edit_hidroterapia">Hidroterapia</label></div>
-                    <div><input type="checkbox" id="edit_informatica" name="informatica" value="1"> <label for="edit_informatica">Informática</label></div>
-                    <div><input type="checkbox" id="edit_terapia_ocupacional" name="terapia_ocupacional" value="1"> <label for="edit_terapia_ocupacional">Terapia Ocupacional</label></div>
-                    <div><input type="checkbox" id="edit_fonoaudiologia" name="fonoaudiologia" value="1"> <label for="edit_fonoaudiologia">Fonoaudiologia</label></div>
-                    <div><input type="checkbox" id="edit_psicologia" name="psicologia" value="1"> <label for="edit_psicologia">Psicologia</label></div>
+                    <div><input type="checkbox" id="add_fisioterapia" name="fisioterapia" value="1"> <label for="add_fisioterapia">Fisioterapia</label></div>
+                    <div><input type="checkbox" id="add_pintura" name="pintura" value="1"> <label for="add_pintura">Pintura</label></div>
+                    <div><input type="checkbox" id="add_musica" name="musica" value="1"> <label for="add_musica">Música</label></div>
+                    <div><input type="checkbox" id="add_hidroterapia" name="hidroterapia" value="1"> <label for="add_hidroterapia">Hidroterapia</label></div>
+                    <div><input type="checkbox" id="add_informatica" name="informatica" value="1"> <label for="add_informatica">Informática</label></div>
+                    <div><input type="checkbox" id="add_terapia_ocupacional" name="terapia_ocupacional" value="1"> <label for="add_terapia_ocupacional">Terapia Ocupacional</label></div>
+                    <div><input type="checkbox" id="add_fonoaudiologia" name="fonoaudiologia" value="1"> <label for="add_fonoaudiologia">Fonoaudiologia</label></div>
+                    <div><input type="checkbox" id="add_psicologia" name="psicologia" value="1"> <label for="add_psicologia">Psicologia</label></div>
                 </div>
 
                 <div class="modal-buttons">
@@ -333,9 +405,9 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     </div>
 
     <div id="footer-placeholder"></div>
-    <script src="js/rodape.js"></script>
-    <script src="js/listagem.js"></script>
-    <script src="js/navbar.js"></script>
+    <script src="js/rodape.js" defer></script>
+    <script src="js/navbar.js" defer></script>
+    <script src="js/listagem.js" defer></script>
 </body>
 
 </html>

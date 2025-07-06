@@ -1,4 +1,7 @@
 <?php session_start(); ?>
+<?php if (!empty($_SESSION['erro_admin'])): ?>
+  <p class="erro"><?= $_SESSION['erro_admin']; unset($_SESSION['erro_admin']); ?></p>
+<?php endif; ?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -17,19 +20,15 @@
     <main class="login-card">
         <div class="card">
             <img src="img/APAE-Horizontal-png.png" alt="APAE">
-            <?php if (isset($_SESSION['erro'])): ?>
-            <p class="erro"><?= $_SESSION['erro']; unset($_SESSION['erro']); ?></p>
-            <?php endif; ?> 
-            <form id="loginForm" onsubmit="login(event)" action="autenticar.php" method="POST">
+            <form id="adminLoginForm" action="api/processa_admin_login.php" method="POST">
                 <div class="input-wrapper">
-                    <span><strong>Email institucional:</strong></span>
-                    <input type="email" name="email" placeholder="Digite seu email" required>
+                    <span><strong>Email cadastrado:</strong></span>
+                    <input type="email" id="email" name="email" required placeholder="Digite o email">
                 </div>
                 <div class="input-wrapper">
                     <span><strong>Senha:</strong></span>
                     <div class="password-input">
-                        <input type="password" name="password" id="passwordInput" placeholder="Digite sua senha" required>
-                        <span class="toggle-password" onclick="togglePasswordVisibility()">Mostrar Senha</span>
+                        <input type="password" id="senha" name="senha" required placeholder="Digite a senha">
                     </div>
                 </div>
                 <a href="cadastro.html" class="link">Cadastrar</a>
@@ -42,7 +41,6 @@
     <div id="footer-placeholder"></div>
     <script src="js/rodape.js"></script>
     <script src="js/navbar.js"></script>
-    <script src="js/login.js"></script>
 </body>
 
 </html>
